@@ -1,0 +1,29 @@
+# Local services. Anvil runs natively with `pnpm chain`; a container alternative is below.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: rwa-postgres
+    environment:
+      POSTGRES_USER: rwa
+      POSTGRES_PASSWORD: rwa
+      POSTGRES_DB: rwa
+    ports:
+      - "5433:5432"
+    volumes:
+      - rwa-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rwa -d rwa"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  anvil:
+    profiles: ["chain"]
+    image: ghcr.io/foundry-rs/foundry:stable
+    container_name: rwa-anvil
+    entrypoint: ["anvil", "--host", "0.0.0.0", "--chain-id", "31337", "--accounts", "12"]
+    ports:
+      - "8545:8545"
+
+volumes:
+  rwa-pgdata:

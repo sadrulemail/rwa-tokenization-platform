@@ -1,0 +1,36 @@
+{
+  "name": "rwa-tokenization-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tokenize real estate, private credit and fund shares with KYC-gated ownership, income distribution and audit trail.",
+  "license": "MIT",
+  "author": "Sadrul Alom",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "chain": "node scripts/chain.mjs",
+    "contracts:build": "cd contracts && forge build",
+    "contracts:test": "cd contracts && forge test",
+    "deploy:local": "node scripts/deploy.mjs --network anvil",
+    "deploy:arbitrum-sepolia": "node scripts/deploy.mjs --network arbitrum_sepolia",
+    "deploy:polygon-amoy": "node scripts/deploy.mjs --network polygon_amoy",
+    "abi": "node scripts/export-abi.mjs && pnpm --filter @rwa/contracts build",
+    "build": "pnpm --filter @rwa/contracts build && pnpm --filter \"./apps/*\" build",
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "seed": "tsx scripts/seed.ts",
+    "test": "pnpm contracts:test && pnpm --filter \"./apps/*\" test",
+    "typecheck": "pnpm --filter \"./apps/*\" typecheck",
+    "lint": "pnpm --filter \"./apps/*\" lint"
+  },
+  "devDependencies": {
+    "@rwa/contracts": "workspace:*",
+    "@types/node": "^22.18.0",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "viem": "^2.57.16"
+  }
+}

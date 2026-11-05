@@ -1,0 +1,13 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+onlyBuiltDependencies:
+  - "@nestjs/core"
+  - esbuild
+  - sharp
+  - unrs-resolver
+  - "@parcel/watcher"
+overrides:
+  # 2.3+ pulls in @coinbase/cdp-sdk, whose optional x402/Solana imports break Next.js bundling.
+  # This app does not use the Base Account connector, so the lighter 2.2 line is enough.
+  "@base-org/account": "2.2.0"
