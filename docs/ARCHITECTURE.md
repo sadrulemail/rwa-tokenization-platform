@@ -25,7 +25,7 @@ sequenceDiagram
   W->>Wallet: sign EIP-4361 message (domain, chain, nonce)
   Wallet-->>W: signature
   W->>API: POST /auth/verify {message, signature}
-  API->>API: check domain, chain, nonce; verify signature (EOA or ERC-1271)
+  API->>API: check domain, chain and nonce, then verify signature (EOA or ERC-1271)
   API-->>W: JWT {sub: wallet, role}
 ```
 
@@ -63,7 +63,7 @@ sequenceDiagram
   I->>D: requestSubscription(token, payment, minShares)
   D->>D: escrow stablecoin, status Pending
   O->>D: approve(id) (must differ from requester)
-  D->>T: shares = payment × 1e18 / NAV; require ≥ minShares
+  D->>T: shares = payment × 1e18 / NAV, require ≥ minShares
   D->>T: mint(investor, shares) → identity + compliance checks
   D->>D: forward stablecoin to treasury
 ```
