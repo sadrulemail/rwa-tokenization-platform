@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: #f6f7f9;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* RainbowKit's button sits in the dark header. */
+[data-rk] button {
+  font-family: inherit;
+}
