@@ -1,0 +1,26 @@
+{
+  "name": "@rwa/indexer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ponder indexer: platform events to PostgreSQL for dashboards and the audit trail.",
+  "type": "module",
+  "scripts": {
+    "dev": "ponder dev --schema indexer --disable-ui",
+    "start": "ponder start --schema indexer_live --views-schema indexer",
+    "codegen": "ponder codegen",
+    "build": "ponder codegen",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "echo \"indexer is exercised by the end-to-end seed run\""
+  },
+  "dependencies": {
+    "@rwa/contracts": "workspace:*",
+    "hono": "^4.13.16",
+    "ponder": "0.18.4",
+    "viem": "^2.57.16"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "~5.9.3"
+  }
+}
