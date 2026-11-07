@@ -1,0 +1,20 @@
+# The images need only the workspace manifests, the apps and the shared contracts package.
+# Deployment addresses and ABIs are already compiled into packages/contracts/src/generated.
+**/node_modules
+**/dist
+**/.next
+**/.ponder
+apps/indexer/generated
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+**/*.log
+.git
+.github
+.claude
+contracts
+docs
+scripts
+docker-compose*.yml
+Dockerfile
+.dockerignore

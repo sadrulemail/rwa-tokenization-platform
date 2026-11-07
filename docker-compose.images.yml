@@ -1,0 +1,65 @@
+# Runs the published Docker Hub images against the local chain.
+#
+#   pnpm chain              # Anvil on :8545 (keep running)
+#   pnpm deploy:local       # second terminal: deploy the platform contracts
+#   docker compose -f docker-compose.images.yml up -d
+#   pnpm seed               # optional: replay about 11 months of activity
+#
+# Then open http://localhost:3000. The containers reach Anvil through host.docker.internal; on Linux
+# without Docker Desktop, Anvil must listen on 0.0.0.0 for that to work.
+name: rwa-images
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: rwa
+      POSTGRES_PASSWORD: rwa
+      POSTGRES_DB: rwa
+    volumes:
+      - rwa-images-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rwa -d rwa"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    image: sadrulemail/rwa-api:1.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Local chain only: the API's development defaults (Anvil registrar key, local secrets).
+      # For a shared network use NODE_ENV=production and set every value in apps/api/.env.example.
+      NODE_ENV: development
+      DATABASE_URL: postgres://rwa:rwa@postgres:5432/rwa
+      RPC_URL: http://host.docker.internal:8545
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "4000:4000"
+
+  indexer:
+    image: sadrulemail/rwa-indexer:1.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://rwa:rwa@postgres:5432/rwa
+      RPC_URL: http://host.docker.internal:8545
+      CHAIN_ID: "31337"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "42069:42069"
+
+  web:
+    image: sadrulemail/rwa-web:1.0.0
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
+volumes:
+  rwa-images-pgdata:

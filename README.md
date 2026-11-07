@@ -162,6 +162,35 @@ development accounts, so every role can be used without a browser extension:
 No configuration is needed locally: every service has defaults for this setup. See each app's `.env.example`
 to override them.
 
+### Run with Docker
+
+The three apps are published on Docker Hub (linux/amd64):
+[`sadrulemail/rwa-api`](https://hub.docker.com/r/sadrulemail/rwa-api),
+[`sadrulemail/rwa-indexer`](https://hub.docker.com/r/sadrulemail/rwa-indexer) and
+[`sadrulemail/rwa-web`](https://hub.docker.com/r/sadrulemail/rwa-web). They run against the local chain
+instead of `pnpm dev`:
+
+```bash
+pnpm chain                                          # Anvil on :8545 (keep running)
+pnpm deploy:local                                   # second terminal
+docker compose -f docker-compose.images.yml up -d   # API :4000, indexer :42069, web :3000, own PostgreSQL
+pnpm seed                                           # optional
+```
+
+The images are built from the root `Dockerfile`, one target per app:
+
+```bash
+docker build --target api     -t sadrulemail/rwa-api .
+docker build --target indexer -t sadrulemail/rwa-indexer .
+docker build --target web     -t sadrulemail/rwa-web .
+```
+
+Contract addresses and the web app's `NEXT_PUBLIC_*` values are compiled in, so the published images
+target Anvil and a browser on the same machine. For another chain, deploy first, then rebuild with
+`--build-arg NEXT_PUBLIC_API_URL=… --build-arg NEXT_PUBLIC_CHAIN_ID=… --build-arg NEXT_PUBLIC_RPC_URL=…`
+for the web image. The API image runs with `NODE_ENV=production`, which requires every secret in
+`apps/api/.env.example`; the compose file switches it to the local defaults.
+
 ## Tests and checks
 
 ```bash
